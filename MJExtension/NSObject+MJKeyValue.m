@@ -94,10 +94,15 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
     // 获得JSON对象
     keyValues = [keyValues mj_JSONObject];
     
+    //LXY:keyValues如果不是字典返回自身,并未向下进行kvc赋值操作
     MJExtensionAssertError([keyValues isKindOfClass:[NSDictionary class]], self, [self class], @"keyValues参数不是一个字典");
     
     Class clazz = [self class];
+    
+    //LXY:获取属性白名单
     NSArray *allowedPropertyNames = [clazz mj_totalAllowedPropertyNames];
+    
+    //LXY:获取属性黑名单
     NSArray *ignoredPropertyNames = [clazz mj_totalIgnoredPropertyNames];
     
     NSLocale *numberLocale = nil;
@@ -252,12 +257,16 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
 {
     // 获得JSON对象
     keyValues = [keyValues mj_JSONObject];
+    
+    //LXY:keyValues不是字典,返回nil
     MJExtensionAssertError([keyValues isKindOfClass:[NSDictionary class]], nil, [self class], @"keyValues参数不是一个字典");
     
     if ([self isSubclassOfClass:[NSManagedObject class]] && context) {
         NSString *entityName = [(NSManagedObject *)self entity].name;
         return [[NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context] mj_setKeyValues:keyValues context:context];
     }
+    
+    //LXY:通过keyValues字典给模型赋值
     return [[[self alloc] init] mj_setKeyValues:keyValues];
 }
 
@@ -347,6 +356,8 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
     if ([self isMemberOfClass:NSNull.class]) { return nil; }
     // 这里虽然返回了自己, 但是其实是有报错信息的.
     // TODO: 报错机制不好, 需要重做
+    
+    //LXY:如果是Foundation的class,返回自身
     MJExtensionAssertError(![MJFoundation isClassFromFoundation:[self class]], (NSMutableDictionary *)self, [self class], @"不是自定义的模型类")
     
     id keyValues = [NSMutableDictionary dictionary];

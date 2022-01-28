@@ -13,6 +13,7 @@
 
 @implementation MJFoundation
 
+//LXY:是否是Foundation框架的系统类或系统的子类
 + (BOOL)isClassFromFoundation:(Class)c
 {
     if (c == [NSObject class] || c == [NSManagedObject class]) return YES;
@@ -43,6 +44,8 @@
     return result;
 }
 
+
+//LXY:判断属性propertyName是否属于NSObject协议
 + (BOOL)isFromNSObjectProtocolProperty:(NSString *)propertyName
 {
     if (!propertyName) return NO;

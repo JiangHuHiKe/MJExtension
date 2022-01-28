@@ -56,6 +56,8 @@ dispatch_once_t mje_onceTokenSemaphore;
 }
 
 #pragma mark - --私有方法--
+
+//LXY:查看是否有需要替换的propertyName
 + (id)mj_propertyKey:(NSString *)propertyName
 {
     MJExtensionAssertParamNotNil2(propertyName, nil);
@@ -126,8 +128,12 @@ dispatch_once_t mje_onceTokenSemaphore;
 + (void)mj_enumerateProperties:(MJPropertiesEnumeration)enumeration
 {
     // 获得成员变量
+    //LXY:去除了系统自带属性的属性列表,属性列表页包含了所有父类的属性
     NSArray *cachedProperties = [self mj_properties];
+    
+    
     // 遍历成员变量
+    //LXY:返回属性实例,封装类型MJProperty
     BOOL stop = NO;
     for (MJProperty *property in cachedProperties) {
         enumeration(property, &stop);
@@ -140,8 +146,10 @@ dispatch_once_t mje_onceTokenSemaphore;
 {
     MJExtensionSemaphoreCreate
     MJ_LOCK(mje_signalSemaphore);
+    
     NSMutableDictionary *cachedInfo = [self mj_propertyDictForKey:&MJCachedPropertiesKey];
     NSMutableArray *cachedProperties = cachedInfo[NSStringFromClass(self)];
+    
     if (cachedProperties == nil) {
         cachedProperties = [NSMutableArray array];
         
@@ -159,8 +167,12 @@ dispatch_once_t mje_onceTokenSemaphore;
                 if ([MJFoundation isFromNSObjectProtocolProperty:property.name]) continue;
                 
                 property.srcClass = c;
+                
+                //LXY:self是自定义的model类型
                 [property setOriginKey:[self mj_propertyKey:property.name] forClass:self];
+                
                 [property setObjectClassInArray:[self mj_propertyObjectClassInArray:property.name] forClass:self];
+                
                 [cachedProperties addObject:property];
             }
             
@@ -170,7 +182,9 @@ dispatch_once_t mje_onceTokenSemaphore;
         
         cachedInfo[NSStringFromClass(self)] = cachedProperties;
     }
+    
     NSArray *properties = [cachedProperties copy];
+    
     MJ_UNLOCK(mje_signalSemaphore);
     
     return properties;

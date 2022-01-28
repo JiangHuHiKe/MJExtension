@@ -19,6 +19,8 @@ static const char MJIgnoredCodingPropertyNamesKey = '\0';
 
 @implementation NSObject (MJClass)
 
+
+//LXY:为每个对应的key分配一个全局的NSMutableDictionary
 + (NSMutableDictionary *)mj_classDictForKey:(const void *)key
 {
     static NSMutableDictionary *allowedPropertyNamesDict;
@@ -41,6 +43,8 @@ static const char MJIgnoredCodingPropertyNamesKey = '\0';
     return nil;
 }
 
+
+//LXY:迭代的方式获取父类的父类
 + (void)mj_enumerateClasses:(MJClassesEnumeration)enumeration
 {
     // 1.没有block就直接返回
@@ -64,6 +68,8 @@ static const char MJIgnoredCodingPropertyNamesKey = '\0';
     }
 }
 
+
+//LXY:迭代返回父类的父类
 + (void)mj_enumerateAllClasses:(MJClassesEnumeration)enumeration
 {
     // 1.没有block就直接返回
@@ -148,7 +154,11 @@ static const char MJIgnoredCodingPropertyNamesKey = '\0';
 {
     MJExtensionSemaphoreCreate
     MJ_LOCK(mje_signalSemaphore);
+    
+    //LXY:获取key对应的全局的dic,然后从dic中获取当前类类名作为key对应的数组array
     NSMutableArray *array = [self mj_classDictForKey:key][NSStringFromClass(self)];
+    
+    
     if (array == nil) {
         // 创建、存储
         [self mj_classDictForKey:key][NSStringFromClass(self)] = array = [NSMutableArray array];
@@ -156,6 +166,8 @@ static const char MJIgnoredCodingPropertyNamesKey = '\0';
         if ([self respondsToSelector:selector]) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            
+            //LXY: 这个数组中的属性名才会进行归档
             NSArray *subArray = [self performSelector:selector];
 #pragma clang diagnostic pop
             if (subArray) {
@@ -163,6 +175,8 @@ static const char MJIgnoredCodingPropertyNamesKey = '\0';
             }
         }
         
+        
+        //LXY:迭代获取父类的父类
         [self mj_enumerateAllClasses:^(__unsafe_unretained Class c, BOOL *stop) {
             NSArray *subArray = objc_getAssociatedObject(c, key);
             [array addObjectsFromArray:subArray];
