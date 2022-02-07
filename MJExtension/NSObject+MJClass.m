@@ -161,6 +161,12 @@ static const char MJIgnoredCodingPropertyNamesKey = '\0';
     
     if (array == nil) {
         // 创建、存储
+        /**
+         LXY:创建一个当前类对应的数组,并将数组放置在一个全局的字典中
+         {
+          @"当前modle类类名":@"当前类对应的 白/黑 名单数组"
+         }
+         */
         [self mj_classDictForKey:key][NSStringFromClass(self)] = array = [NSMutableArray array];
         
         if ([self respondsToSelector:selector]) {

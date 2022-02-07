@@ -57,7 +57,7 @@ dispatch_once_t mje_onceTokenSemaphore;
 
 #pragma mark - --私有方法--
 
-//LXY:查看是否有需要替换的propertyName
+//LXY:查看是否有需要替换的propertyName,如果有返回,如果没有返回propertyName
 + (id)mj_propertyKey:(NSString *)propertyName
 {
     MJExtensionAssertParamNotNil2(propertyName, nil);
@@ -100,6 +100,8 @@ dispatch_once_t mje_onceTokenSemaphore;
     return key;
 }
 
+
+//LXY:获取数组中的模型类
 + (Class)mj_propertyObjectClassInArray:(NSString *)propertyName
 {
     __block id clazz = nil;
@@ -168,9 +170,22 @@ dispatch_once_t mje_onceTokenSemaphore;
                 
                 property.srcClass = c;
                 
-                //LXY:self是自定义的model类型
+                /**
+                 LXY:
+                 [self mj_propertyKey:property.name] 返回需要替换的属性名称,如果不需要替换则返回property.name
+                 self是自定义的model类型
+
+                 */
                 [property setOriginKey:[self mj_propertyKey:property.name] forClass:self];
                 
+                
+                /**
+                 //LXY:
+                 [self mj_propertyObjectClassInArray:property.name] 获取数组中的模型类
+                 self是自定义的model类型
+                 
+                 当前属性是数组,该方法记录当前数组属性中的模型类
+                 */
                 [property setObjectClassInArray:[self mj_propertyObjectClassInArray:property.name] forClass:self];
                 
                 [cachedProperties addObject:property];

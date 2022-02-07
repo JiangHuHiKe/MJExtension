@@ -99,10 +99,10 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
     
     Class clazz = [self class];
     
-    //LXY:获取属性白名单
+    //LXY:获取属性白名单,一个包含属性名称的数组
     NSArray *allowedPropertyNames = [clazz mj_totalAllowedPropertyNames];
     
-    //LXY:获取属性黑名单
+    //LXY:获取属性黑名单,一个包含属性名称的数组
     NSArray *ignoredPropertyNames = [clazz mj_totalIgnoredPropertyNames];
     
     NSLocale *numberLocale = nil;
@@ -266,7 +266,7 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
         return [[NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context] mj_setKeyValues:keyValues context:context];
     }
     
-    //LXY:通过keyValues字典给模型赋值
+    //LXY:初始化一个实例对象,并通过keyValues字典给模型赋值
     return [[[self alloc] init] mj_setKeyValues:keyValues];
 }
 
