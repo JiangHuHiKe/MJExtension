@@ -10,6 +10,7 @@
 
 @implementation MJPropertyKey
 
+//LXY:根据self.name从object中取出对象
 - (id)valueInObject:(id)object
 {
     if ([object isKindOfClass:[NSDictionary class]] && self.type == MJPropertyKeyTypeDictionary) {

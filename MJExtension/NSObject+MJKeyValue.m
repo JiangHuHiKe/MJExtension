@@ -129,14 +129,18 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
             }
             
             // 值的过滤
+            //LXY::查看是否有旧值换新值【过滤字典的值（比如字符串日期处理为NSDate、字符串nil处理为@""）】
             id newValue = [clazz mj_getNewValueFromObject:self oldValue:value property:property];
             if (newValue != value) { // 有过滤后的新值
+                //LXY:kvc设置成员变量的值
                 [property setValue:newValue forObject:self];
                 return;
             }
             
             // 如果没有值，就直接返回
             if (!value || value == [NSNull null]) return;
+            
+            
             
             // 2.复杂处理
             MJPropertyType *type = property.type;
@@ -156,7 +160,8 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
             
             if (!type.isFromFoundation && propertyClass) { // 模型属性
                 value = [propertyClass mj_objectWithKeyValues:value context:context];
-            } else if (objectClass) {
+            }
+            else if (objectClass) {
                 if (objectClass == [NSURL class] && [value isKindOfClass:[NSArray class]]) {
                     // string array -> url array
                     NSMutableArray *urlArray = [NSMutableArray array];
@@ -168,7 +173,9 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
                 } else { // 字典数组-->模型数组
                     value = [objectClass mj_objectArrayWithKeyValuesArray:value context:context];
                 }
-            } else if (propertyClass == [NSString class]) {
+                
+            }
+            else if (propertyClass == [NSString class]) {
                 if ([value isKindOfClass:[NSNumber class]]) {
                     // NSNumber -> NSString
                     value = [value description];
@@ -176,7 +183,8 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
                     // NSURL -> NSString
                     value = [value absoluteString];
                 }
-            } else if ([value isKindOfClass:[NSString class]]) {
+            }
+            else if ([value isKindOfClass:[NSString class]]) {
                 if (propertyClass == [NSURL class]) {
                     // NSString -> NSURL
                     // 字符串转码
@@ -209,7 +217,8 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
                         }
                     }
                 }
-            } else if ([value isKindOfClass:[NSNumber class]] && propertyClass == [NSDecimalNumber class]){
+            }
+            else if ([value isKindOfClass:[NSNumber class]] && propertyClass == [NSDecimalNumber class]){
                 // 过滤 NSDecimalNumber类型
                 if (![value isKindOfClass:[NSDecimalNumber class]]) {
                     value = [NSDecimalNumber decimalNumberWithDecimal:[((NSNumber *)value) decimalValue]];
@@ -310,6 +319,8 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
         if ([keyValues isKindOfClass:[NSArray class]]){
             [modelArray addObject:[self mj_objectArrayWithKeyValuesArray:keyValues context:context]];
         } else {
+            
+            //LXY:递归调用,利用已有的方法进行字典转模型
             id model = [self mj_objectWithKeyValues:keyValues context:context];
             if (model) [modelArray addObject:model];
         }

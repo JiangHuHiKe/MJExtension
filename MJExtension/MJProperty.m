@@ -101,6 +101,7 @@
 /**
  *  通过字符串key创建对应的keys
  */
+//LXY:为什么要将属性放入一个数组中???
 - (NSArray *)propertyKeysWithStringKey:(NSString *)stringKey
 {
     if (stringKey.length == 0) return nil;
@@ -142,6 +143,11 @@
 }
 
 /** 对应着字典中的key */
+/**
+ //LXY:
+ originKey:属性名
+ c:属性所属的模型类
+ */
 - (void)setOriginKey:(id)originKey forClass:(Class)c
 {
     if ([originKey isKindOfClass:[NSString class]]) { // 字符串类型的key
@@ -163,7 +169,13 @@
     }
 }
 
+
 /** 对应着字典中的多级key */
+/**
+ LXY:
+ propertyKeys:有属性的嵌套列表如:@[@[MJPropertyKey]]
+ c:属性所属的模型类
+ */
 - (void)setPropertyKeys:(NSArray *)propertyKeys forClass:(Class)c
 {
     if (propertyKeys.count == 0) return;
@@ -175,6 +187,12 @@
     MJ_UNLOCK(self.propertyKeysLock);
 }
 
+
+/**
+ LXY:
+ 获取有属性名的嵌套列表如:@[@[MJPropertyKey]]
+ c:属性所属的模型类
+ */
 - (NSArray *)propertyKeysForClass:(Class)c
 {
     NSString *key = NSStringFromClass(c);
@@ -185,6 +203,7 @@
     MJ_UNLOCK(self.propertyKeysLock);
     return propertyKeys;
 }
+
 
 /** 模型数组中的模型类型 */
 - (void)setObjectClassInArray:(Class)objectClass forClass:(Class)c
@@ -197,6 +216,7 @@
     self.objectClassInArrayDict[key] = objectClass;
     MJ_UNLOCK(self.objectClassInArrayLock);
 }
+
 
 - (Class)objectClassInArrayForClass:(Class)c
 {

@@ -130,7 +130,11 @@ dispatch_once_t mje_onceTokenSemaphore;
 + (void)mj_enumerateProperties:(MJPropertiesEnumeration)enumeration
 {
     // 获得成员变量
-    //LXY:去除了系统自带属性的属性列表,属性列表页包含了所有父类的属性
+    /**
+     LXY:去除了系统自带属性的属性列表,
+     属性列表页包含了所有父类的属性,
+     并且属性已经被包装成了MJProperty
+     */
     NSArray *cachedProperties = [self mj_properties];
     
     
@@ -213,6 +217,8 @@ dispatch_once_t mje_onceTokenSemaphore;
     MJ_UNLOCK(mje_signalSemaphore);
 }
 
+
+//LXY:查看是否有旧值换新值【过滤字典的值（比如字符串日期处理为NSDate、字符串nil处理为@""）】
 + (id)mj_getNewValueFromObject:(__unsafe_unretained id)object oldValue:(__unsafe_unretained id)oldValue property:(MJProperty *__unsafe_unretained)property{
     // 如果有实现方法
     if ([object respondsToSelector:@selector(mj_newValueFromOldValue:property:)]) {
