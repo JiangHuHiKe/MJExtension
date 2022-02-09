@@ -114,6 +114,7 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
     [clazz mj_enumerateProperties:^(MJProperty *property, BOOL *stop) {
         @try {
             // 0.检测是否被忽略
+            //LXY:白名单和黑名单检查
             if (allowedPropertyNames.count && ![allowedPropertyNames containsObject:property.name]) return;
             if ([ignoredPropertyNames containsObject:property.name]) return;
             
@@ -143,9 +144,9 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
             
             
             // 2.复杂处理
-            MJPropertyType *type = property.type;
-            Class propertyClass = type.typeClass;
-            Class objectClass = [property objectClassInArrayForClass:[self class]];
+            MJPropertyType *type = property.type;//LXY:描述属性的相关类
+            Class propertyClass = type.typeClass;//LXY:属性所属的类
+            Class objectClass = [property objectClassInArrayForClass:[self class]];//LXY:模型数组中的模型类型
             
             // 不可变 -> 可变处理
             if (propertyClass == [NSMutableArray class] && [value isKindOfClass:[NSArray class]]) {
@@ -225,10 +226,15 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
                 }
             }
             
+            
+            
+            
             // 经过转换后, 最终检查 value 与 property 是否匹配
             if (propertyClass && ![value isKindOfClass:propertyClass]) {
                 value = nil;
             }
+            
+            
             
             // 3.赋值
             [property setValue:value forObject:self];
